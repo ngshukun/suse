@@ -1,0 +1,2 @@
+# to find out the secret for rancher prime check for the secret in cattle-system, bootstrap-secret
+kubectl get secret -n cattle-system bootstrao-secret -o go-template='{{.data.bootstrapPassword|base64decode}}'{{"\n"}}'
