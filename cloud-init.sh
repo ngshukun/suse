@@ -1,6 +1,6 @@
 #cloud-config
 preserve_hostname: false
-fqdn: sles
+fqdn: suse
 
 # Create the user and give sudo
 users:
@@ -23,7 +23,7 @@ chpasswd:
 runcmd:
   - systemctl enable --now sshd
 
-
+# for ubuntu
 #cloud-config
 # Create the user and give sudo
 users:
