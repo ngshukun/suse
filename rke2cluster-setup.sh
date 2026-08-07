@@ -1,8 +1,30 @@
 # to install k9s
 kubectl get secret -n cattle-system bootstrap-secret -o go-template='{{.data.bootstrapPassword|base64decode}}'{{"\n"}}
 
+# to install autocomplete for kubectl command
+zypper download bash-completion
+sudo rpm -ivh bash-completion*.rpm
+sudo mkdir -p /etc/bash_completion.d/ 
+/var/lib/rancher/rke2/bin/kubectl completion bash | sudo \ tee /etc/bash_completion.d/kubectl > /dev/null
+cat <<'EOF' >> ~/.bashrc
+
+# Load system bash completion framework
+[ -f /usr/share/bash-completion/bash-completion ] && . /usr/share/bash-completion/bash-completion
+
+# Load static kubectl completion file
+[ -f /etc/bash_completion.d/kubectl ] && source /etc/bash_completion.d/kubectl
+
+# Setup 'k' alias with completion
+alias k=kubectl
+complete -o default -F __start_kubectl k
+EOF
+
+exec bash
+
 # to find out the secret for rancher prime check for the secret in cattle-system, bootstrap-secret
 kubectl get secret -n cattle-system bootstrap-secret -o go-template='{{.data.bootstrapPassword|base64decode}}'{{"\n"}}
+
+
 
 # download rke2 script
 # sudo as root
@@ -17,3 +39,8 @@ vi /etc/rancher/rke2/config.yaml
 server: https://192.168.64.12:9345
 token: K10e415da04c32af979d2858228994dc976b3fd5e244fe6a0b809f420d59dc703fb::server:kubeadmincourse
 
+# to see cluster info
+kubectl cluster-info
+# to pipe cluster info to a file
+mkdir -p rke2-info # create a folder so contain the dump info
+kubectl cluster-info dump --output-directory=<<absolute path>> > rke2-cluster.json
