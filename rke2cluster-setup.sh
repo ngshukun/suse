@@ -43,4 +43,26 @@ token: K10e415da04c32af979d2858228994dc976b3fd5e244fe6a0b809f420d59dc703fb::serv
 kubectl cluster-info
 # to pipe cluster info to a file
 mkdir -p rke2-info # create a folder so contain the dump info
-kubectl cluster-info dump --output-directory=<<absolute path>> > rke2-cluster.json
+kubectl cluster-info dump --output-directory="absolute path" > rke2-cluster.json
+
+# to install rke2
+curl -sfL https://get.rke2.io -o install.sh
+chmod +x install.sh
+INSTALL_RKE2_TYPE=server INSTALL_RKE2_CHANNEL=v1.34 ./install # <-- this will install the rke2 runtime
+
+mkdir -p /etc/rancher/rke2
+vi /etc/rancher/rke2/config.yaml # <-- you will update the config from here, such as the token, tls-san
+### config.yaml ###
+server: https://cluster01.example.com:9345. # <-- for server node1, no need to put, for node 2 and 3 onward, need to add this server line
+token: myrke2cluster01
+tls-san:                         # <-- for agent node you do no need this line
+  - cluster01.example.com.       # <-- for agent node you do no need this line
+cni: canal                       # <-- for agent node you do no need this line
+
+
+
+# to uninstall rke2, from root
+systemctl stop rke2-server
+rke2-killall.sh
+rke2-uninstall.sh
+# it will remove all from the node
