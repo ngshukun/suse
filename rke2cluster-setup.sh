@@ -66,3 +66,19 @@ systemctl stop rke2-server
 rke2-killall.sh
 rke2-uninstall.sh
 # it will remove all from the node
+
+# airgapped installation
+mkdir /root/rke2-artifacts && cd /root/rke2-artifacts/
+curl -OLs https://github.com/rancher/rke2/releases/download/v1.33.1%2Brke2r1/rke2-images.linux-amd64.tar.zst
+curl -OLs https://github.com/rancher/rke2/releases/download/v1.33.1%2Brke2r1/rke2.linux-amd64.tar.gz
+curl -OLs https://github.com/rancher/rke2/releases/download/v1.33.1%2Brke2r1/sha256sum-amd64.txt
+curl -sfL https://get.rke2.io --output install.sh
+INSTALL_RKE2_ARTIFACT_PATH=/root/rke2-artifacts sh install.sh
+
+
+# if you had a cert to put in rke2
+sudo mkdir -p /var/lib/rancher/rke2/server/tls/
+
+# Copy your custom cert and key with these EXACT filenames:
+sudo cp /path/to/your/custom.crt /var/lib/rancher/rke2/server/tls/serving-kube-apiserver.crt
+sudo cp /path/to/your/custom.key /var/lib/rancher/rke2/server/tls/serving-kube-apiserver.key
