@@ -76,7 +76,7 @@ curl -sfL https://get.rke2.io --output install.sh
 INSTALL_RKE2_ARTIFACT_PATH=/root/rke2-artifacts sh install.sh
 
 
-# if you had a cert to put in rke2
+# if you had a cert to put in rke2. NOT REOMMENDED
 sudo mkdir -p /var/lib/rancher/rke2/server/tls/
 
 # Copy your custom cert and key with these EXACT filenames:
