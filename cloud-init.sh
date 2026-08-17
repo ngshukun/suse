@@ -48,3 +48,14 @@ runcmd:
   - systemctl enable --now ssh
   - [ systemctl, restart, ssh]
   - [ systemctl, restart, sshd]
+
+# network data for harvester
+version: 2
+ethernets:
+  enp1s0:
+    dhcp4: false
+    addresses:
+      - 172.20.0.11/24
+    nameservers:
+      addresses:
+        - 172.20.0.30
