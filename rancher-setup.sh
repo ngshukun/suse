@@ -28,3 +28,12 @@ chmod +x rancher-save-images.sh rancher-load-images.sh
 helm repo add rancher-prime https://charts.rancher.com/server-charts/prime
 helm repo update
 helm pull rancher-prime/rancher --version 2.13.8
+
+# you will need to download container images from internet connected env the following are from sk account. from the terminal, perform following:
+podman login registry.rancher.com -u c1c862f821
+password: a749bba8e9
+
+# Download the container images
+./rancher-save-images.sh \
+--image-list ./rancher-images.txt \
+--source-registry registry.rancher.com
