@@ -88,3 +88,14 @@ nohup ./rancher-save-images.sh   --image-list ./rancher-images.txt   --source-re
 
 # To monitor the status
 tail -f pull.log
+# when download completed, you should see the following statement:
+# Creating rancher-images.tar.gz with 870 images
+# OCI Helm charts saved in ./rancher-oci-charts/ (5 files). Used by rancher-load-images.sh. Remove with: rm -rf ./rancher-oci-charts
+
+# Move the images in the rancher-images.tar.gz to your private registry using the scripts to load the images.
+
+# Log into your private registry if required:
+docker login <REGISTRY.YOURDOMAIN.COM:PORT>
+
+# Use rancher-load-images.sh to extract, tag and push rancher-images.txt and rancher-images.tar.gz to your private registry:
+./rancher-load-images.sh --image-list ./rancher-images.txt --registry <REGISTRY.YOURDOMAIN.COM:PORT>
