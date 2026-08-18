@@ -1,4 +1,17 @@
 # to install k9s
+# 1. Download the binary archive
+curl -sS https://webinstall.dev/k9s | bash
+
+# OR manually download the latest release tarball:
+curl -LO https://github.com/derailed/k9s/releases/latest/download/k9s_Linux_amd64.tar.gz
+
+# 2. Extract and move to /usr/local/bin
+tar -xvf k9s_Linux_amd64.tar.gz
+mv k9s /usr/local/bin/
+
+# 3. Verify installation
+k9s version
+
 kubectl get secret -n cattle-system bootstrap-secret -o go-template='{{.data.bootstrapPassword|base64decode}}'{{"\n"}}
 
 # to install autocomplete for kubectl command
@@ -63,8 +76,8 @@ cni: canal                       # <-- for agent node you do no need this line
 
 # to uninstall rke2, from root
 systemctl stop rke2-server
-rke2-killall.sh
-rke2-uninstall.sh
+sh /opt/rke2/bin/rke2-killall.sh
+sh /opt/rke2/bin/rke2-uninstall.sh
 # it will remove all from the node
 
 # airgapped installation
@@ -99,3 +112,34 @@ docker login <REGISTRY.YOURDOMAIN.COM:PORT>
 
 # Use rancher-load-images.sh to extract, tag and push rancher-images.txt and rancher-images.tar.gz to your private registry:
 ./rancher-load-images.sh --image-list ./rancher-images.txt --registry <REGISTRY.YOURDOMAIN.COM:PORT>
+
+# in /etc/rancher/rke2/config.yaml, update the following
+token: rancher
+tls-san:
+  - rancher.example.com
+
+# in /etc/rancher/rke2/registries.yaml, update the following
+mirrors:
+  "harbor.example.com":
+    endpoint:
+      - "https://harbor.example.com"
+
+configs:
+  "harbor.example.com":
+    auth:
+      username: "suse"
+      password: "P@ssw0rd"
+    tls:
+      ca_file: "/home/suse/ca-chain.crt"
+      insecure_skip_verify: true
+
+# installing rancher
+helm install rancher ./rancher-2.13.8.tgz \
+  --namespace cattle-system \
+  --set hostname=rancher.example.com \
+  --set image.registry=harbor.example.com \
+  --set systemDefaultRegistry=harbor.example.com \
+  --set ingress.tls.source=secret \
+  --set privateCA=true \
+  --set useBundledSystemChart=true
+
