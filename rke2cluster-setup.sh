@@ -82,3 +82,9 @@ sudo mkdir -p /var/lib/rancher/rke2/server/tls/
 # Copy your custom cert and key with these EXACT filenames:
 sudo cp /path/to/your/custom.crt /var/lib/rancher/rke2/server/tls/serving-kube-apiserver.crt
 sudo cp /path/to/your/custom.key /var/lib/rancher/rke2/server/tls/serving-kube-apiserver.key
+
+# To download images from background
+nohup ./rancher-save-images.sh   --image-list ./rancher-images.txt   --source-registry registry.rancher.com > pull.log 2>&1 &
+
+# To monitor the status
+tail -f pull.log
