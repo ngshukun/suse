@@ -141,5 +141,6 @@ helm install rancher ./rancher-2.13.8.tgz \
   --set systemDefaultRegistry=harbor.example.com \
   --set ingress.tls.source=secret \
   --set privateCA=true \
-  --set useBundledSystemChart=true
+  --set useBundledSystemChart=true \
+  --set replicas=1  # <-- if you need to set number of replicate, default is 3 
 
