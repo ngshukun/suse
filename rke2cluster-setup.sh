@@ -134,15 +134,7 @@ configs:
       insecure_skip_verify: true
 
 # installing rancher
-helm install rancher ./rancher-2.13.8.tgz \
-  --namespace cattle-system \
-  --set hostname=rancher.example.com \
-  --set image.registry=harbor.example.com \
-  --set systemDefaultRegistry=harbor.example.com \
-  --set ingress.tls.source=secret \
-  --set privateCA=true \
-  --set useBundledSystemChart=true \
-  --set replicas=1  # <-- if you need to set number of replicate, default is 3 
+helm install rancher ./rancher-2.14.1.tgz   --namespace cattle-system   --set hostname=rancher.example.com   --set replicas=1   --set bootstrapPassword='P@ssw0rd'   --set image.registry=harbor.example.com   --set systemDefaultRegistry=harbor.example.com   --set useBundledSystemChart=true
 
 Environment Baseline
 
