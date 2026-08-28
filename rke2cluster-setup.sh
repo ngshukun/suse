@@ -144,3 +144,24 @@ helm install rancher ./rancher-2.13.8.tgz \
   --set useBundledSystemChart=true \
   --set replicas=1  # <-- if you need to set number of replicate, default is 3 
 
+Environment Baseline
+
+Platform: RKE2 Kubernetes cluster.
+
+Workload: Rancher v2.14.1 and Jetstack cert-manager.
+
+Storage Routing: Private Harbor container registry (harbor.example.com).
+
+Container Engine: Podman (aliased as Docker) on the local workstation.
+
+The Harbor Garbage Collection Guardrail
+Initial attempts to clear a corrupted 470MB download from Harbor were blocked by a strict, built-in 2-hour protection window for untagged artifacts. Attempting to force a backend cleanup via the container CLI revealed that modern Harbor releases (v2.15.2) intentionally remove the registry binary from the $PATH to prevent database corruption. The solution was to isolate the orphaned data by deleting the UI project entirely and allowing the load script to automatically route the fresh payload into a newly generated rancher project directory.
+
+The Podman Archiving Bottleneck
+The most significant roadblock occurred during the image packaging phase. The official rancher-save-images.sh script relies on standard Docker pipeline behavior. When executed via Podman, the pipeline silently failed, overwriting the archive repeatedly for each image until it produced a mathematically impossible 28MB file for 697 tags. We bypassed the script entirely by extracting the cached SUSE tags into a valid text list, appending the required cert-manager images via Helm templating, and utilizing Podman's explicit --multi-image-archive (-m) flag to successfully compile a massive 44.3GB payload.
+
+Silent Decompression and Loading
+During the final Harbor push phase, the load script initially appeared completely frozen. Advanced system diagnostics (top, docker system df) confirmed the server was actually maxing out CPU and I/O wait states to silently unpack 119.7GB of raw filesystem layers into local storage via pigz before pushing the manifests over the network.
+
+Containerd Routing Adjustments
+Before Helm deployment, the RKE2 engine configuration (registries.yaml) required precise structural corrections. We removed the restrictive /library path appendage to prevent 404 image routing errors and explicitly matched the containerd mirror names to your Harbor domain to enable seamless SSL certificate authentication.
