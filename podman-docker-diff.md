@@ -54,7 +54,7 @@ Ran rancher-save-images.sh with the rancher-images.txt image list to create a ta
 ./rancher-save-images.sh --image-list ./rancher-images.txt
 ```
 
-The following output is observed:
+The following output observed:
 
 ```sh
 -rw-r--r--. 1 root root  21631 Aug 27 16:33 rancher-2.14.1.tgz
@@ -65,7 +65,7 @@ The following output is observed:
 ```
 
 Checked docker size and confirm there are 698 images in total adding up to almost 120 GB
-one of the image is already 1.89GB,  so the tar ball size does not make senses. 
+one of the image is already 1.89GB,  so the tar ball size does not make senses.
 
 ```sh
 node01:~/rancher-v2.14.1-airgap # docker system df
@@ -85,7 +85,10 @@ The official rancher-save-images.sh script was written explicitly for native Doc
 Podman, however, handles this command differently. When handed a list of multiple images to save without special flags, Podman processes them sequentially and repeatedly overwrites the output file. Instead of a 44GB file containing 697 images, you ended up with a 28MB file containing only the very last image on the list. Passing the --multi-image-archive (-m) flag to Podman is the only way to force it to combine them, which the Rancher script does not do natively.
 
 walkaround:
+
+```sh
 bypass the script and use Podman's built-in --multi-image-archive (-m) flag to force it to combine the 119 GB of cached images into a single file.
+```
 
 ```sh
 docker images --format '{{.Repository}}:{{.Tag}}' | grep 'registry.suse.com/rancher' > valid-local-images.txt
