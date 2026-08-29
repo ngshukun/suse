@@ -136,6 +136,11 @@ configs:
 # installing rancher
 helm install rancher ./rancher-2.14.1.tgz   --namespace cattle-system   --set hostname=rancher.example.com   --set replicas=1   --set bootstrapPassword='P@ssw0rd'   --set image.registry=harbor.example.com   --set systemDefaultRegistry=harbor.example.com   --set useBundledSystemChart=true
 
+
+# retrived password, username is admin 
+kubectl get secret --namespace cattle-system bootstrap-secret -o go-template='{{.data.bootstrapPassword|base64decode}}{{"\n"}}'
+
+
 Environment Baseline
 
 Platform: RKE2 Kubernetes cluster.
